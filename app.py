@@ -1,58 +1,32 @@
-from flask import Flask
-import pyodbc
+import os
+
+from flask import (Flask, redirect, render_template, request,
+                   send_from_directory, url_for)
 
 app = Flask(__name__)
 
-# Configura la conexión a la base de datos
-config = {
-    'driver': '{ODBC Driver 17 for SQL Server}',
-    'server': 'jga.database.windows.net',
-    'database': 'coches',
-    'uid': 'jga',
-    'pwd': '1234!Strong',
-    'Encrypt': 'yes',
-    'TrustServerCertificate': 'no',
-    'Connection Timeout': 30
-}
 
-# Intenta establecer la conexión a la base de datos
-try:
-    conn_str = ";".join([f"{key}={value}" for key, value in config.items()])
-    conn = pyodbc.connect(conn_str)
-    print("Conexión exitosa a la base de datos")
+@app.route('/')
+def index():
+   print('Request for index page received')
+   return render_template('index.html')
 
-    # Crea un cursor para ejecutar consultas
-    cursor = conn.cursor()
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(os.path.join(app.root_path, 'static'),
+                               'favicon.ico', mimetype='image/vnd.microsoft.icon')
 
-    # Definimos la ruta "/" para la página principal
-    @app.route("/")
-    def index():
-        # Ejecuta una consulta para obtener los datos de coches
-        cursor.execute("SELECT * FROM coches")
+@app.route('/hello', methods=['POST'])
+def hello():
+   name = request.form.get('name')
 
-        # Obtiene los resultados de la consulta
-        results = cursor.fetchall()
-
-        # Construye la respuesta en formato HTML
-        response = "<h1>Datos de coches:</h1>"
-        for row in results:
-            response += f"<p>ID: {row[0]}, Marca: {row[1]}, Modelo: {row[2]}, Año: {row[3]}</p>"
-
-        return response
-
-    # Cierra el cursor y la conexión al finalizar la petición
-    @app.teardown_appcontext
-    def close_connection(exception):
-        cursor.close()
-        conn.close()
-        print("Conexión cerrada.")
-
-except pyodbc.Error as error:
-    print(f"Error al obtener los datos de coches: {error}")
-
-if __name__ == "__main__":
-    app.run(debug=True, port=8000)
-#el puerto 8000 es el que utiliza azure en la web app, hay 2 soluciones , o cambiar aqui el puerto predeterminado a 8000, o en azure cambiarlo con esta solucion: https://stackoverflow.com/questions/69477076/azure-flask-web-app-azure-sql-github-500-server-error-every-day
+   if name:
+       print('Request for hello page received with name=%s' % name)
+       return render_template('hello.html', name = name)
+   else:
+       print('Request for hello page received with no name or blank name -- redirecting')
+       return redirect(url_for('index'))
 
 
-
+if __name__ == '__main__':
+   app.run()
