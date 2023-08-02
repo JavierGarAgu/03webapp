@@ -51,4 +51,8 @@ except pyodbc.Error as error:
     print(f"Error al obtener los datos de coches: {error}")
 
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True, port=8000)
+#el puerto 8000 es el que utiliza azure en la web app, hay 2 soluciones , o cambiar aqui el puerto predeterminado a 8000, o en azure cambiarlo con esta solucion: https://stackoverflow.com/questions/69477076/azure-flask-web-app-azure-sql-github-500-server-error-every-day
+
+
+
