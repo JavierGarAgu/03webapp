@@ -1,28 +1,26 @@
 <!doctype html>
 <head>
     <title>Hello Azure - Python Quickstart</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}">
-    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <html>
    <body>
      <main>
         <div class="px-4 py-3 my-2 text-center">
-            <img class="d-block mx-auto mb-4" src="{{ url_for('static', filename='images/azure-icon.svg') }}" alt="Azure Logo" width="192" height="192"/>
-            <h1 class="display-6 fw-bold">Hello JGA</h1>
+            <h1 class="display-6 fw-bold">Hello User</h1>
             {% if database_connected %}
-            <h2>Lista de Coches</h2>
-            <table class="table table-bordered">
+            <h2>Car List</h2>
+            <table class="table table-bordered custom-table">
                 <thead>
                     <tr>
                         <th>ID</th>
-                        <th>Marca</th>
-                        <th>Modelo</th>
-                        <th>Año</th>
+                        <th>Brand</th>
+                        <th>Model</th>
+                        <th>Year</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- Aquí se mostrarán los datos de los coches -->
+                    <!-- Data for cars will be displayed here -->
                     {% for row in results %}
                     <tr>
                         <td>{{ row[0] }}</td>
@@ -34,7 +32,7 @@
                 </tbody>
             </table>
             {% else %}
-            <p>No se pudo conectar a la base de datos. Verifica la configuración de conexión.</p>
+            <p>Failed to connect to the database. Please verify the connection settings.</p>
             {% endif %}
           </div>
      </main>

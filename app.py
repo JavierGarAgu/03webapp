@@ -4,7 +4,7 @@ import os
 
 app = Flask(__name__)
 
-# Configura la conexión a la base de datos
+# Configure the database connection
 config = {
     'driver': '{ODBC Driver 17 for SQL Server}',
     'server': os.environ.get('APPSETTING_SERVER'),
@@ -16,17 +16,17 @@ config = {
     'Connection Timeout': 30
 }
 
-# Intenta establecer la conexión a la base de datos
+# Attempt to establish the database connection
 try:
     conn_str = ";".join([f"{key}={value}" for key, value in config.items()])
     conn = pyodbc.connect(conn_str)
-    print("Conexión exitosa a la base de datos")
+    print("Successful connection to the database")
 
-    # Crea un cursor para ejecutar consultas
+    # Create a cursor to execute queries
     cursor = conn.cursor()
 
 except pyodbc.Error as error:
-    print(f"Error al conectar a la base de datos: {error}")
+    print(f"Error connecting to the database: {error}")
     conn = None
     cursor = None
 
@@ -36,7 +36,7 @@ def index():
 
     try:
         if conn:
-            # Realiza una consulta a la base de datos para obtener los datos de coches
+            # Execute a query to retrieve data from the 'coches' table in the database
             cursor.execute("SELECT * FROM coches")
             results = cursor.fetchall()
             database_connected = True
@@ -44,7 +44,7 @@ def index():
             results = []
             database_connected = False
     except pyodbc.Error as error:
-        print(f"Error al obtener los datos de coches: {error}")
+        print(f"Error fetching data from coches table: {error}")
         results = []
         database_connected = False
 
