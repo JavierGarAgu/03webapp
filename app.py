@@ -6,10 +6,10 @@ app = Flask(__name__)
 # Configura la conexión a la base de datos
 config = {
     'driver': '{ODBC Driver 17 for SQL Server}',
-    'server': 'jga.database.windows.net',
-    'database': 'coches',
-    'uid': 'jga',
-    'pwd': '1234!Strong',
+    'server': os.environ.get('APPSETTING_SERVER'),
+    'database': os.environ.get('APPSETTING_DB'),
+    'uid': os.environ.get('APPSETTING_USER'),
+    'pwd': os.environ.get('APPSETTING_PASSWORD'),
     'Encrypt': 'yes',
     'TrustServerCertificate': 'no',
     'Connection Timeout': 30
