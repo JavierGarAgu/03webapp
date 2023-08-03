@@ -1,6 +1,5 @@
-import os
+from flask import Flask, render_template
 import pyodbc
-from flask import Flask, redirect, render_template, request, send_from_directory, url_for
 
 app = Flask(__name__)
 
@@ -16,40 +15,39 @@ config = {
     'Connection Timeout': 30
 }
 
-# Función para obtener una conexión a la base de datos
-def get_db_connection():
+# Intenta establecer la conexión a la base de datos
+try:
     conn_str = ";".join([f"{key}={value}" for key, value in config.items()])
-    return pyodbc.connect(conn_str)
+    conn = pyodbc.connect(conn_str)
+    print("Conexión exitosa a la base de datos")
+
+    # Crea un cursor para ejecutar consultas
+    cursor = conn.cursor()
+
+except pyodbc.Error as error:
+    print(f"Error al conectar a la base de datos: {error}")
+    conn = None
+    cursor = None
 
 @app.route('/')
 def index():
     print('Request for index page received')
-    return render_template('index.html')
 
-@app.route('/coches')
-def coches():
-    connection = get_db_connection()
-    cursor = connection.cursor()
-    cursor.execute('SELECT * FROM coches')
-    data = cursor.fetchall()
-    cursor.close()
-    connection.close()
-    return render_template('coches.html', data=data)
+    try:
+        if conn:
+            # Realiza una consulta a la base de datos para obtener los datos de coches
+            cursor.execute("SELECT * FROM coches")
+            results = cursor.fetchall()
+            database_connected = True
+        else:
+            results = []
+            database_connected = False
+    except pyodbc.Error as error:
+        print(f"Error al obtener los datos de coches: {error}")
+        results = []
+        database_connected = False
 
-@app.route('/favicon.ico')
-def favicon():
-    return send_from_directory(os.path.join(app.root_path, 'static'), 'favicon.ico', mimetype='image/vnd.microsoft.icon')
-
-@app.route('/hello', methods=['POST'])
-def hello():
-    name = request.form.get('name')
-
-    if name:
-        print('Request for hello page received with name=%s' % name)
-        return render_template('hello.html', name=name)
-    else:
-        print('Request for hello page received with no name or blank name -- redirecting')
-        return redirect(url_for('index'))
+    return render_template('index.html', results=results, database_connected=database_connected)
 
 if __name__ == '__main__':
     app.run()
