@@ -48,7 +48,10 @@ def index():
         results = []
         database_connected = False
 
-    return render_template('index.html', results=results, database_connected=database_connected)
+    # Get the user from the environment variable APPSETTING_USER
+    user = os.environ.get('APPSETTING_USER', 'User')
+
+    return render_template('index.html', results=results, database_connected=database_connected, user=user)
 
 if __name__ == '__main__':
     app.run()

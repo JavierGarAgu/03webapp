@@ -1,13 +1,13 @@
 <!doctype html>
 <head>
     <title>Hello Azure - Python Quickstart</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="styles.css">
 </head>
 <html>
    <body>
      <main>
         <div class="px-4 py-3 my-2 text-center">
-            <h1 class="display-6 fw-bold">Hello User</h1>
+            <h1 class="display-6 fw-bold">Hello {{ user }}</h1>
             {% if database_connected %}
             <h2>Car List</h2>
             <table class="table table-bordered custom-table">
